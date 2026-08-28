@@ -12,12 +12,12 @@
   --destaque-escuro: #8f1c0f;
   --linha: rgba(255, 255, 255, .1);
   --espaco-x: 20px;
-  --espaco-y: 88px;
+  --espaco-y: 64px;
   --ease: cubic-bezier(.16, 1, .3, 1);
 }
 
 @media (min-width: 700px) {
-  :root { --espaco-x: 56px; --espaco-y: 140px; }
+  :root { --espaco-x: 56px; --espaco-y: 100px; }
 }
 @media (min-width: 1300px) {
   :root { --espaco-x: 96px; }
@@ -792,18 +792,5 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
 }
 .outro-titulo a { color: var(--texto); transition: color .4s ease; }
 .outro-titulo a:hover { color: var(--destaque); }
-.rodape {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding: 26px var(--espaco-x) 40px;
-  font-size: 10.5px;
-  color: var(--texto-fraco);
-}
-.rodape a { color: var(--texto-fraco); }
-.rodape a:hover { color: var(--destaque); }
-
 /* quando prefers-reduced-motion está ativo o JS nem chega a esconder
    estes elementos — eles ficam sempre no estado final (ver main.js) */
