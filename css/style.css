@@ -201,26 +201,32 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
    menu fixo
    ============================================================ */
 .menu {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 61;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 18px;
   padding: 20px var(--espaco-x);
-  background: rgba(36, 32, 27, .82);
-  backdrop-filter: blur(10px) saturate(1.2);
-  -webkit-backdrop-filter: blur(10px) saturate(1.2);
-  border-bottom: 1px solid var(--linha);
-  transition: padding .3s ease, box-shadow .3s ease, background .3s ease;
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition: padding .3s ease, box-shadow .3s ease, background .3s ease, border-color .3s ease;
 }
 .menu.rolado {
   padding-top: 12px;
   padding-bottom: 12px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, .35);
   background: rgba(28, 24, 20, .94);
+  backdrop-filter: blur(10px) saturate(1.2);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  border-bottom-color: var(--linha);
 }
+.marca,
+.menu-links a:not(.botao) { text-shadow: 0 1px 5px rgba(0, 0, 0, .55); }
+.marca img { filter: drop-shadow(0 1px 4px rgba(0, 0, 0, .5)); }
 .marca {
   display: flex;
   align-items: center;
@@ -386,7 +392,7 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
   display: flex;
   align-items: flex-end;
   min-height: 100svh;
-  padding: 0 var(--espaco-x) 110px;
+  padding: 100px var(--espaco-x) 110px;
   overflow: hidden;
   background: var(--fundo-escuro);
 }
@@ -398,14 +404,14 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
   height: 112%;
   object-fit: cover;
   object-position: center 28%;
-  opacity: .55;
-  filter: grayscale(.3) contrast(1.08);
+  opacity: .85;
+  filter: grayscale(.12) contrast(1.05);
   will-change: transform;
 }
 .capa-sobreposicao {
   position: absolute;
   inset: 0;
-  background: linear-gradient(190deg, rgba(28, 24, 20, .22) 10%, rgba(28, 24, 20, .82) 88%);
+  background: linear-gradient(190deg, rgba(28, 24, 20, .06) 10%, rgba(28, 24, 20, .68) 88%);
 }
 .capa-conteudo {
   position: relative;
@@ -433,7 +439,6 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
   color: #c9c4be;
   max-width: 420px;
 }
-.capa-acoes { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
 .dica-rolar {
   position: absolute;
   right: var(--espaco-x);
