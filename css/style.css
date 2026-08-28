@@ -666,14 +666,6 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
   transition: transform 1s var(--ease), filter .6s ease;
 }
 .peca:hover .peca-moldura img { transform: scale(1); filter: grayscale(0) contrast(1); }
-.peca-legenda {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 12px;
-  font-size: 11px;
-  color: var(--texto-fraco);
-  letter-spacing: .04em;
-}
 
 /* ============================================================
    lightbox
@@ -726,47 +718,6 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
 }
 
 /* ============================================================
-   processo
-   ============================================================ */
-.processo { background: var(--fundo-alt); border-bottom: 1px solid var(--linha); }
-.etapas {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 48px;
-  margin-top: 8px;
-}
-@media (min-width: 700px) {
-  .etapas { grid-template-columns: repeat(3, 1fr); gap: 40px; }
-  .linha-processo {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 17px;
-    height: 1px;
-    background: var(--linha);
-  }
-  .linha-processo-preenchida {
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 0%;
-    background: var(--destaque);
-  }
-}
-.etapa { position: relative; display: flex; flex-direction: column; gap: 12px; }
-.etapa-numero {
-  font-family: 'Permanent Marker', cursive;
-  font-size: 24px;
-  color: var(--destaque);
-  display: inline-block;
-  transform: scale(0);
-}
-.etapa-titulo { font-family: Oswald, sans-serif; font-size: 19px; text-transform: uppercase; color: var(--texto); }
-.etapa-texto { font-size: 13px; line-height: 1.75; color: var(--texto-suave); max-width: 280px; }
-
-/* ============================================================
    contato
    ============================================================ */
 .contato {
@@ -807,11 +758,29 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
    outro / bookend final
    ============================================================ */
 .outro {
-  padding: 130px var(--espaco-x) 70px;
+  position: relative;
+  overflow: hidden;
+  padding: 90px var(--espaco-x) 76px;
   text-align: center;
   border-top: 1px solid var(--linha);
 }
+.outro-fundo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  opacity: .4;
+  filter: grayscale(.4);
+}
+.outro-sobreposicao {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(28, 24, 20, .55) 0%, rgba(28, 24, 20, .92) 78%);
+}
 .outro-titulo {
+  position: relative;
   font-family: Oswald, sans-serif;
   font-weight: 700;
   font-size: clamp(46px, 11vw, 130px);

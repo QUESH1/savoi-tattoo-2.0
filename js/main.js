@@ -138,31 +138,6 @@
   }
 
   /* ---------------------------------------------------------
-     como funciona — linha de progresso + números batendo
-     --------------------------------------------------------- */
-  function iniciarProcesso() {
-    if (!temGsap) return;
-    var etapas = document.querySelector('.etapas');
-    var linha = document.getElementById('linha-preenchida');
-    if (!etapas) return;
-
-    if (linha && !reduzido) {
-      gsap.to(linha, {
-        width: '100%',
-        ease: 'none',
-        scrollTrigger: { trigger: etapas, start: 'top 65%', end: 'bottom 55%', scrub: true }
-      });
-    }
-    gsap.to('.etapa-numero', {
-      scale: 1,
-      duration: .6,
-      ease: 'back.out(3)',
-      stagger: .15,
-      scrollTrigger: { trigger: etapas, start: 'top 78%' }
-    });
-  }
-
-  /* ---------------------------------------------------------
      índice de seções — pontinhos que acompanham a rolagem
      --------------------------------------------------------- */
   function iniciarIndice() {
@@ -180,7 +155,7 @@
     });
 
     if (!temGsap) return;
-    var ids = ['topo', 'sobre', 'portfolio', 'processo', 'contato'];
+    var ids = ['topo', 'sobre', 'portfolio', 'contato'];
     ids.forEach(function (id, i) {
       var secao = document.getElementById(id);
       if (!secao) return;
@@ -475,7 +450,6 @@
     iniciarPreloader();
     iniciarRevelacoes();
     iniciarParalaxe();
-    iniciarProcesso();
     iniciarIndice();
     iniciarMenu();
     iniciarMenuMobile();
