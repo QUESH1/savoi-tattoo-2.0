@@ -34,14 +34,7 @@
   }
 
   function iniciarPreloader() {
-    var path = document.getElementById('loader-path');
-    if (path && path.getTotalLength) {
-      try {
-        var len = path.getTotalLength();
-        path.style.strokeDasharray = String(len);
-        path.style.strokeDashoffset = String(len);
-      } catch (erro) { /* svg ainda não pronto em algum navegador antigo */ }
-    }
+    var mancha = document.getElementById('loader-mancha');
 
     if (!temGsap || reduzido) { revelarSemAnimacao(); return; }
 
@@ -49,6 +42,7 @@
     // coberto — assim não há flash do conteúdo em estado "normal"
     gsap.set('.capa-titulo .linha span', { yPercent: 105 });
     gsap.set('.capa-conteudo .aparecer', { opacity: 0, y: 18 });
+    if (mancha) gsap.set(mancha, { opacity: 0, scale: .82, clipPath: 'inset(100% 0 0 0)' });
 
     var tl = gsap.timeline({
       delay: .2,
@@ -62,14 +56,14 @@
       }
     });
 
-    if (path && path.style.strokeDasharray) {
-      tl.to(path, { strokeDashoffset: 0, duration: 1, ease: 'power2.inOut' });
+    if (mancha) {
+      tl.to(mancha, { opacity: 1, scale: 1, clipPath: 'inset(0% 0 0 0)', duration: .9, ease: 'power3.out' });
     } else {
       tl.to({}, { duration: .5 });
     }
-    tl.to('.loader-texto', { opacity: 0, duration: .3 }, '-=.15')
-      .to('.loader-mancha', { opacity: 0, scale: .7, duration: .3 }, '<')
-      .to(cortina, { scaleY: 0, duration: .95, ease: 'power4.inOut' }, '-=.05');
+    tl.to('.loader-texto', { opacity: 0, duration: .3 }, '-=.15');
+    if (mancha) tl.to(mancha, { opacity: 0, scale: .92, duration: .3 }, '<');
+    tl.to(cortina, { scaleY: 0, duration: .95, ease: 'power4.inOut' }, '-=.05');
   }
 
   // rede de segurança: se algo travar, a página nunca fica presa atrás da cortina
