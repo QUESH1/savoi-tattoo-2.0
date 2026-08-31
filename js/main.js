@@ -325,6 +325,44 @@
   }
 
   /* ---------------------------------------------------------
+     vídeos de fundo (contato e "vamo tatuar") — autoplay em
+     loop, mudo, só quando visíveis; funciona em qualquer
+     navegador porque nunca depende só do autoplay nativo
+     --------------------------------------------------------- */
+  function iniciarVideosFundo() {
+    var videos = [document.getElementById('contato-fundo'), document.getElementById('outro-fundo')]
+      .filter(function (v) { return !!v; });
+    if (!videos.length || reduzido) return;
+
+    function tentarTocar(video) {
+      var promessa = video.play();
+      if (promessa && promessa.catch) promessa.catch(function () { /* navegador bloqueou, tenta de novo depois */ });
+    }
+
+    if ('IntersectionObserver' in window) {
+      var observador = new IntersectionObserver(function (itens) {
+        itens.forEach(function (item) {
+          if (item.isIntersecting) tentarTocar(item.target);
+          else item.target.pause();
+        });
+      }, { threshold: .15 });
+      videos.forEach(function (v) { observador.observe(v); });
+    } else {
+      videos.forEach(tentarTocar);
+    }
+
+    // navegadores mais restritos só liberam o play() depois de um gesto do usuário
+    function retentarNoGesto() {
+      videos.forEach(function (v) {
+        if (v.paused && v.getBoundingClientRect().top < window.innerHeight) tentarTocar(v);
+      });
+    }
+    ['pointerdown', 'touchstart', 'keydown', 'scroll'].forEach(function (evento) {
+      document.addEventListener(evento, retentarNoGesto, { once: true, passive: true });
+    });
+  }
+
+  /* ---------------------------------------------------------
      portfólio em lightbox
      --------------------------------------------------------- */
   function iniciarLightbox() {
@@ -456,6 +494,7 @@
     iniciarFaixa();
     iniciarTiltSobre();
     iniciarVideoSobre();
+    iniciarVideosFundo();
     iniciarLightbox();
     iniciarMagnetismo();
     iniciarCursor();
