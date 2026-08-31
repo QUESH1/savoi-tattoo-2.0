@@ -564,17 +564,27 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
 @media (min-width: 760px) {
   .sobre { grid-template-columns: .8fr 1fr; gap: 80px; }
 }
-.sobre-foto { position: relative; width: 100%; max-width: 360px; margin: 0 auto; perspective: 900px; }
+.sobre-foto { position: relative; width: 100%; max-width: 380px; margin: 0 auto; perspective: 900px; }
 .polaroid {
-  background: #e9e4da;
-  padding: 10px 10px 36px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, .55);
-  transition: transform .5s var(--ease), box-shadow .5s ease;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1224 / 1285;
+  filter: drop-shadow(0 22px 34px rgba(0, 0, 0, .5));
+  transition: transform .5s var(--ease), filter .5s ease;
   transform-style: preserve-3d;
 }
-.polaroid-moldura { position: relative; width: 100%; padding-top: 125%; overflow: hidden; display: block; }
-.polaroid-moldura img,
-.polaroid-moldura video {
+.polaroid-video-mascara {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  -webkit-mask-image: url(../imagens/polaroid-mascara.png);
+  mask-image: url(../imagens/polaroid-mascara.png);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+.polaroid-video {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -584,12 +594,19 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
   transition: transform .7s var(--ease), filter .5s ease;
   background: #000;
 }
-.polaroid:hover img,
-.polaroid:hover video { transform: scale(1.07); filter: grayscale(0); }
-.botao-tocar {
+.polaroid:hover .polaroid-video { transform: scale(1.07); filter: grayscale(0); }
+.polaroid-moldura-img {
   position: absolute;
   inset: 0;
-  margin: auto;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.botao-tocar {
+  position: absolute;
+  left: 50.7%;
+  top: 42.7%;
+  transform: translate(-50%, -50%);
   width: 62px;
   height: 62px;
   padding: 0;
@@ -609,14 +626,8 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
   border-width: 9px 0 9px 15px;
   border-color: transparent transparent transparent var(--texto);
 }
-.botao-tocar:hover { background: var(--destaque); transform: scale(1.08); }
+.botao-tocar:hover { background: var(--destaque); transform: translate(-50%, -50%) scale(1.08); }
 .botao-tocar.escondido { display: none; }
-.fita {
-  position: absolute;
-  height: 22px;
-  background: rgba(230, 220, 150, .55);
-  border: 1px solid rgba(0, 0, 0, .08);
-}
 .sobre-texto { font-size: 15.5px; line-height: 1.85; color: #c9c4be; }
 .sobre-citacao {
   font-family: 'Permanent Marker', cursive;
