@@ -363,6 +363,76 @@
   }
 
   /* ---------------------------------------------------------
+     carrossel do portfólio — arrasta com o dedo/mouse, tem
+     setas, e não deixa um arraste virar clique sem querer
+     --------------------------------------------------------- */
+  function iniciarCarrossel() {
+    var trilha = document.getElementById('carrossel-trilha');
+    var btnAnterior = document.querySelector('.carrossel-anterior');
+    var btnProximo = document.querySelector('.carrossel-proximo');
+    if (!trilha) return;
+
+    var arrastando = false;
+    var moveu = false;
+    var inicioX = 0;
+    var inicioScroll = 0;
+
+    trilha.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      arrastando = true;
+      moveu = false;
+      inicioX = e.clientX;
+      inicioScroll = trilha.scrollLeft;
+      trilha.classList.add('arrastando');
+      trilha.setPointerCapture(e.pointerId);
+    });
+    trilha.addEventListener('pointermove', function (e) {
+      if (!arrastando) return;
+      var delta = e.clientX - inicioX;
+      if (Math.abs(delta) > 5) moveu = true;
+      trilha.scrollLeft = inicioScroll - delta;
+    });
+    function soltar() {
+      arrastando = false;
+      trilha.classList.remove('arrastando');
+    }
+    trilha.addEventListener('pointerup', soltar);
+    trilha.addEventListener('pointercancel', soltar);
+    trilha.addEventListener('pointerleave', function () { if (arrastando) soltar(); });
+
+    // pega o clique antes dele chegar na peça — se veio de um arraste, cancela
+    trilha.addEventListener('click', function (e) {
+      if (moveu) { e.stopPropagation(); e.preventDefault(); }
+    }, true);
+
+    function largoDoCartao() {
+      var peca = trilha.querySelector('.peca');
+      if (!peca) return 300;
+      var gap = parseFloat(getComputedStyle(trilha).columnGap || getComputedStyle(trilha).gap || 22);
+      return peca.getBoundingClientRect().width + gap;
+    }
+    function atualizarSetas() {
+      if (!btnAnterior || !btnProximo) return;
+      var max = trilha.scrollWidth - trilha.clientWidth - 4;
+      btnAnterior.disabled = trilha.scrollLeft <= 4;
+      btnProximo.disabled = trilha.scrollLeft >= max;
+    }
+    if (btnAnterior) {
+      btnAnterior.addEventListener('click', function () {
+        trilha.scrollBy({ left: -largoDoCartao(), behavior: reduzido ? 'auto' : 'smooth' });
+      });
+    }
+    if (btnProximo) {
+      btnProximo.addEventListener('click', function () {
+        trilha.scrollBy({ left: largoDoCartao(), behavior: reduzido ? 'auto' : 'smooth' });
+      });
+    }
+    trilha.addEventListener('scroll', atualizarSetas, { passive: true });
+    window.addEventListener('resize', atualizarSetas);
+    atualizarSetas();
+  }
+
+  /* ---------------------------------------------------------
      portfólio em lightbox
      --------------------------------------------------------- */
   function iniciarLightbox() {
@@ -495,6 +565,7 @@
     iniciarTiltSobre();
     iniciarVideoSobre();
     iniciarVideosFundo();
+    iniciarCarrossel();
     iniciarLightbox();
     iniciarMagnetismo();
     iniciarCursor();
