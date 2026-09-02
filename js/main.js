@@ -138,6 +138,33 @@
   }
 
   /* ---------------------------------------------------------
+     como funciona — linha do tempo enche conforme rola,
+     números batem quando a etapa entra na tela
+     --------------------------------------------------------- */
+  function iniciarProcesso() {
+    if (!temGsap) return;
+    var etapas = document.querySelector('.etapas');
+    var linha = document.getElementById('etapas-linha-preenchida');
+    if (!etapas) return;
+
+    if (linha && !reduzido) {
+      gsap.to(linha, {
+        height: '100%',
+        ease: 'none',
+        scrollTrigger: { trigger: etapas, start: 'top 60%', end: 'bottom 75%', scrub: true }
+      });
+    }
+    document.querySelectorAll('.etapa-numero').forEach(function (numero) {
+      gsap.to(numero, {
+        scale: 1,
+        duration: .6,
+        ease: 'back.out(3)',
+        scrollTrigger: { trigger: numero, start: 'top 82%' }
+      });
+    });
+  }
+
+  /* ---------------------------------------------------------
      índice de seções — pontinhos que acompanham a rolagem
      --------------------------------------------------------- */
   function iniciarIndice() {
@@ -155,7 +182,7 @@
     });
 
     if (!temGsap) return;
-    var ids = ['topo', 'sobre', 'portfolio', 'contato'];
+    var ids = ['topo', 'sobre', 'portfolio', 'processo', 'contato'];
     ids.forEach(function (id, i) {
       var secao = document.getElementById(id);
       if (!secao) return;
@@ -558,6 +585,7 @@
     iniciarPreloader();
     iniciarRevelacoes();
     iniciarParalaxe();
+    iniciarProcesso();
     iniciarIndice();
     iniciarMenu();
     iniciarMenuMobile();
