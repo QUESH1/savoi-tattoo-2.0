@@ -357,7 +357,7 @@
      navegador porque nunca depende só do autoplay nativo
      --------------------------------------------------------- */
   function iniciarVideosFundo() {
-    var videos = [document.getElementById('contato-fundo'), document.getElementById('outro-fundo')]
+    var videos = [document.getElementById('contato-fundo')]
       .filter(function (v) { return !!v; });
     if (!videos.length || reduzido) return;
 
