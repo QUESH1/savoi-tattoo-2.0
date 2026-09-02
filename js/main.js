@@ -357,7 +357,7 @@
      navegador porque nunca depende só do autoplay nativo
      --------------------------------------------------------- */
   function iniciarVideosFundo() {
-    var videos = [document.getElementById('contato-fundo')]
+    var videos = [document.getElementById('outro-fundo')]
       .filter(function (v) { return !!v; });
     if (!videos.length || reduzido) return;
 
@@ -457,6 +457,38 @@
     trilha.addEventListener('scroll', atualizarSetas, { passive: true });
     window.addEventListener('resize', atualizarSetas);
     atualizarSetas();
+
+    // efeito 3D tipo coverflow — cada peça inclina conforme a distância do centro da trilha
+    var pecas3d = Array.prototype.slice.call(trilha.querySelectorAll('.peca'));
+    if (pecas3d.length && !reduzido) {
+      var tickAgendado = false;
+      function aplicarInclinacao() {
+        tickAgendado = false;
+        var trilhaRect = trilha.getBoundingClientRect();
+        var centro = trilhaRect.left + trilhaRect.width / 2;
+        var raio = (trilhaRect.width / 2) || 1;
+        var deltas = pecas3d.map(function (peca) {
+          var r = peca.getBoundingClientRect();
+          var d = ((r.left + r.width / 2) - centro) / raio;
+          return d < -1.3 ? -1.3 : (d > 1.3 ? 1.3 : d);
+        });
+        pecas3d.forEach(function (peca, i) {
+          var d = deltas[i];
+          var abs = d < 0 ? -d : d;
+          peca.style.transform = 'perspective(1300px) rotateY(' + (d * -24).toFixed(2) + 'deg) scale(' + (1 - abs * .12).toFixed(3) + ')';
+          peca.style.opacity = (1 - abs * .32).toFixed(2);
+        });
+      }
+      function agendarInclinacao() {
+        if (tickAgendado) return;
+        tickAgendado = true;
+        requestAnimationFrame(aplicarInclinacao);
+      }
+      trilha.addEventListener('scroll', agendarInclinacao, { passive: true });
+      window.addEventListener('resize', agendarInclinacao);
+      window.addEventListener('load', agendarInclinacao);
+      aplicarInclinacao();
+    }
   }
 
   /* ---------------------------------------------------------
@@ -472,11 +504,27 @@
     var elementoAnterior = null;
     var btnFechar = document.getElementById('lightbox-fechar');
 
-    function mostrar(i) {
-      atual = (i + pecas.length) % pecas.length;
-      var img = pecas[atual].querySelector('img');
-      imgEl.src = img.currentSrc || img.src;
-      imgEl.alt = img.alt;
+    function mostrar(i, animar) {
+      var novo = (i + pecas.length) % pecas.length;
+      var img = pecas[novo].querySelector('img');
+      var src = img.currentSrc || img.src;
+      if (animar && temGsap && !reduzido && novo !== atual) {
+        gsap.to(imgEl, {
+          rotationY: -90, opacity: 0, duration: .22, ease: 'power2.in',
+          onComplete: function () {
+            imgEl.src = src;
+            imgEl.alt = img.alt;
+            gsap.fromTo(imgEl,
+              { rotationY: 90, opacity: 0 },
+              { rotationY: 0, opacity: 1, duration: .38, ease: 'power2.out', clearProps: 'transform,opacity' }
+            );
+          }
+        });
+      } else {
+        imgEl.src = src;
+        imgEl.alt = img.alt;
+      }
+      atual = novo;
     }
     function abrir(i) {
       elementoAnterior = document.activeElement;
@@ -502,14 +550,14 @@
     var btnAnterior = document.getElementById('lightbox-anterior');
     var btnProximo = document.getElementById('lightbox-proximo');
     if (btnFechar) btnFechar.addEventListener('click', fechar);
-    if (btnAnterior) btnAnterior.addEventListener('click', function () { mostrar(atual - 1); });
-    if (btnProximo) btnProximo.addEventListener('click', function () { mostrar(atual + 1); });
+    if (btnAnterior) btnAnterior.addEventListener('click', function () { mostrar(atual - 1, true); });
+    if (btnProximo) btnProximo.addEventListener('click', function () { mostrar(atual + 1, true); });
     lightbox.addEventListener('click', function (e) { if (e.target === lightbox) fechar(); });
     document.addEventListener('keydown', function (e) {
       if (!lightbox.classList.contains('aberto')) return;
       if (e.key === 'Escape') fechar();
-      if (e.key === 'ArrowLeft') mostrar(atual - 1);
-      if (e.key === 'ArrowRight') mostrar(atual + 1);
+      if (e.key === 'ArrowLeft') mostrar(atual - 1, true);
+      if (e.key === 'ArrowRight') mostrar(atual + 1, true);
     });
   }
 

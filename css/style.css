@@ -112,7 +112,9 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
   .cursor-anel.grande {
     width: 84px;
     height: 84px;
-    background: var(--fundo-escuro);
+    background: rgba(28, 24, 20, .38);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-color: var(--destaque);
   }
   .cursor-anel.grande .cursor-texto { opacity: 1; }
@@ -668,6 +670,7 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
   flex: 0 0 auto;
   width: min(74vw, 300px);
   scroll-snap-align: start;
+  will-change: transform;
 }
 @media (min-width: 700px) {
   .peca { width: min(38vw, 320px); }
@@ -731,7 +734,7 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
   transition: opacity .4s ease, visibility 0s linear .4s;
 }
 .lightbox.aberto { opacity: 1; visibility: visible; transition: opacity .4s ease; }
-.lightbox-img-wrap { position: relative; max-width: min(88vw, 620px); max-height: 82vh; }
+.lightbox-img-wrap { position: relative; max-width: min(88vw, 620px); max-height: 82vh; perspective: 1200px; }
 .lightbox-img-wrap img {
   max-width: 100%;
   max-height: 82vh;
@@ -739,6 +742,7 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
   box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
   transform: scale(.94);
   opacity: 0;
+  backface-visibility: hidden;
   transition: transform .45s var(--ease), opacity .45s ease;
 }
 .lightbox.aberto .lightbox-img-wrap img { transform: scale(1); opacity: 1; }
