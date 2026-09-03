@@ -390,34 +390,95 @@
   }
 
   /* ---------------------------------------------------------
-     carrossel do portfólio — arrasta com o dedo/mouse, tem
-     setas, e não deixa um arraste virar clique sem querer
+     carrossel do portfólio — deck escuro em loop automático,
+     tipo "profundidade de campo": a peça central fica grande
+     e nítida, as demais encolhem, escurecem e descem conforme
+     se afastam do centro. Arrasta pra navegar manualmente.
      --------------------------------------------------------- */
   function iniciarCarrossel() {
+    var carrossel = document.querySelector('.carrossel');
     var trilha = document.getElementById('carrossel-trilha');
     var btnAnterior = document.querySelector('.carrossel-anterior');
     var btnProximo = document.querySelector('.carrossel-proximo');
-    if (!trilha) return;
+    if (!carrossel || !trilha) return;
 
+    // duplica as peças via JS (não no HTML) pra fechar o loop infinito
+    // sem duplicar o peso das imagens na página
+    var originais = Array.prototype.slice.call(trilha.querySelectorAll('.peca'));
+    if (!originais.length) return;
+    originais.forEach(function (peca) {
+      var clone = peca.cloneNode(true);
+      clone.setAttribute('aria-hidden', 'true');
+      clone.setAttribute('tabindex', '-1');
+      trilha.appendChild(clone);
+    });
+    var pecas = Array.prototype.slice.call(trilha.querySelectorAll('.peca'));
+
+    var largura = 0;
+    var x = 0;
+    var velBase = reduzido ? 0 : .45;
+    var velAtual = velBase;
     var arrastando = false;
     var moveu = false;
+    var pausado = false;
+    var inicioPonteiro = 0;
     var inicioX = 0;
-    var inicioScroll = 0;
+
+    function medir() { largura = trilha.scrollWidth / 2; }
+    medir();
+    window.addEventListener('resize', medir);
+    window.addEventListener('load', medir);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(medir);
+
+    function aplicarProfundidade() {
+      var rect = carrossel.getBoundingClientRect();
+      var centro = rect.left + rect.width / 2;
+      var raio = (rect.width / 2) || 1;
+      var deltas = pecas.map(function (peca) {
+        var r = peca.getBoundingClientRect();
+        var d = ((r.left + r.width / 2) - centro) / raio;
+        d = d < -0.85 ? -0.85 : (d > 0.85 ? 0.85 : d);
+        return d / 0.85;
+      });
+      pecas.forEach(function (peca, i) {
+        var d = deltas[i];
+        var abs = d < 0 ? -d : d;
+        peca.style.transform = 'translateY(' + (abs * 64).toFixed(2) + 'px) scale(' + (1 - abs * .58).toFixed(3) + ')';
+        peca.style.filter = 'brightness(' + Math.max(1 - abs * 1.15, .08).toFixed(3) + ')';
+        peca.style.opacity = (1 - abs * .35).toFixed(2);
+        peca.style.zIndex = String(200 - Math.round(abs * 150));
+      });
+    }
+
+    function passo() {
+      if (!arrastando && !pausado) x -= velAtual;
+      if (largura > 0) {
+        if (x <= -largura) x += largura;
+        if (x > 0) x -= largura;
+      }
+      trilha.style.transform = 'translateX(' + x + 'px)';
+      aplicarProfundidade();
+      requestAnimationFrame(passo);
+    }
+    requestAnimationFrame(passo);
+
+    carrossel.addEventListener('pointerenter', function () { pausado = true; });
+    carrossel.addEventListener('pointerleave', function () { pausado = false; if (arrastando) soltar(); });
 
     trilha.addEventListener('pointerdown', function (e) {
       if (e.pointerType === 'mouse' && e.button !== 0) return;
       arrastando = true;
       moveu = false;
-      inicioX = e.clientX;
-      inicioScroll = trilha.scrollLeft;
+      inicioPonteiro = e.clientX;
+      inicioX = x;
       trilha.classList.add('arrastando');
       trilha.setPointerCapture(e.pointerId);
     });
     trilha.addEventListener('pointermove', function (e) {
       if (!arrastando) return;
-      var delta = e.clientX - inicioX;
+      var delta = e.clientX - inicioPonteiro;
       if (Math.abs(delta) > 5) moveu = true;
-      trilha.scrollLeft = inicioScroll - delta;
+      x = inicioX + delta;
     });
     function soltar() {
       arrastando = false;
@@ -434,62 +495,12 @@
 
     function largoDoCartao() {
       var peca = trilha.querySelector('.peca');
-      if (!peca) return 300;
+      if (!peca) return 240;
       var gap = parseFloat(getComputedStyle(trilha).columnGap || getComputedStyle(trilha).gap || 22);
       return peca.getBoundingClientRect().width + gap;
     }
-    function atualizarSetas() {
-      if (!btnAnterior || !btnProximo) return;
-      var max = trilha.scrollWidth - trilha.clientWidth - 4;
-      btnAnterior.disabled = trilha.scrollLeft <= 4;
-      btnProximo.disabled = trilha.scrollLeft >= max;
-    }
-    if (btnAnterior) {
-      btnAnterior.addEventListener('click', function () {
-        trilha.scrollBy({ left: -largoDoCartao(), behavior: reduzido ? 'auto' : 'smooth' });
-      });
-    }
-    if (btnProximo) {
-      btnProximo.addEventListener('click', function () {
-        trilha.scrollBy({ left: largoDoCartao(), behavior: reduzido ? 'auto' : 'smooth' });
-      });
-    }
-    trilha.addEventListener('scroll', atualizarSetas, { passive: true });
-    window.addEventListener('resize', atualizarSetas);
-    atualizarSetas();
-
-    // efeito 3D tipo coverflow — cada peça inclina conforme a distância do centro da trilha
-    var pecas3d = Array.prototype.slice.call(trilha.querySelectorAll('.peca'));
-    if (pecas3d.length && !reduzido) {
-      var tickAgendado = false;
-      function aplicarInclinacao() {
-        tickAgendado = false;
-        var trilhaRect = trilha.getBoundingClientRect();
-        var centro = trilhaRect.left + trilhaRect.width / 2;
-        var raio = (trilhaRect.width / 2) || 1;
-        var deltas = pecas3d.map(function (peca) {
-          var r = peca.getBoundingClientRect();
-          var d = ((r.left + r.width / 2) - centro) / raio;
-          return d < -1.3 ? -1.3 : (d > 1.3 ? 1.3 : d);
-        });
-        pecas3d.forEach(function (peca, i) {
-          var d = deltas[i];
-          var abs = d < 0 ? -d : d;
-          peca.style.transform = 'perspective(1300px) rotateY(' + (d * -27).toFixed(2) + 'deg) scale(' + (1 - abs * .16).toFixed(3) + ')';
-          peca.style.filter = 'brightness(' + (1 - abs * .62).toFixed(3) + ') saturate(' + (1 - abs * .35).toFixed(3) + ')';
-          peca.style.opacity = (1 - abs * .12).toFixed(2);
-        });
-      }
-      function agendarInclinacao() {
-        if (tickAgendado) return;
-        tickAgendado = true;
-        requestAnimationFrame(aplicarInclinacao);
-      }
-      trilha.addEventListener('scroll', agendarInclinacao, { passive: true });
-      window.addEventListener('resize', agendarInclinacao);
-      window.addEventListener('load', agendarInclinacao);
-      aplicarInclinacao();
-    }
+    if (btnAnterior) btnAnterior.addEventListener('click', function () { x += largoDoCartao(); });
+    if (btnProximo) btnProximo.addEventListener('click', function () { x -= largoDoCartao(); });
   }
 
   /* ---------------------------------------------------------
