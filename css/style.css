@@ -573,10 +573,8 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
   grid-template-columns: 1fr;
   gap: 56px;
   align-items: center;
-  background: var(--fundo-escuro);
   border-bottom: 1px solid var(--linha);
 }
-#portfolio { background: var(--fundo-escuro); }
 @media (min-width: 760px) {
   .sobre { grid-template-columns: .8fr 1fr; gap: 80px; }
 }
@@ -656,11 +654,7 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
 /* ============================================================
    portfólio — carrossel horizontal
    ============================================================ */
-.carrossel {
-  position: relative;
-  margin: 0 calc(var(--espaco-x) * -1);
-  padding: 36px var(--espaco-x);
-}
+.carrossel { position: relative; margin: 0 calc(var(--espaco-x) * -1); padding: 0 var(--espaco-x); }
 .carrossel-trilha {
   display: flex;
   gap: 22px;
