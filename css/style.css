@@ -360,20 +360,13 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
 /* ============================================================
    rótulo pequeno / marca d'agua de mancha de tinta
    ============================================================ */
-.rotulo {
+.rotulo-imagem {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: .17em;
-  text-transform: uppercase;
-  color: var(--destaque);
 }
-.rotulo::before { content: ""; width: 26px; height: 2px; background: var(--destaque); }
-@media (min-width: 700px) {
-  .rotulo { font-size: 18px; }
-}
+.rotulo-imagem::before { content: ""; width: 26px; height: 2px; background: var(--destaque); flex: none; }
+.rotulo-svg { display: block; width: clamp(190px, 32vw, 340px); height: auto; fill: var(--destaque); }
 
 .mancha-marca {
   position: absolute;
