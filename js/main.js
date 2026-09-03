@@ -443,15 +443,15 @@
       pecas.forEach(function (peca, i) {
         var d = deltas[i];
         var abs = d < 0 ? -d : d;
-        peca.style.transform = 'translateY(' + (abs * 64).toFixed(2) + 'px) scale(' + (1 - abs * .58).toFixed(3) + ')';
-        peca.style.filter = 'brightness(' + Math.max(1 - abs * 1.15, .08).toFixed(3) + ')';
-        peca.style.opacity = (1 - abs * .35).toFixed(2);
+        peca.style.transform = 'translateY(' + (abs * 40).toFixed(2) + 'px) scale(' + (1 - abs * .46).toFixed(3) + ')';
+        peca.style.filter = 'brightness(' + Math.max(1 - abs * .78, .28).toFixed(3) + ')';
+        peca.style.opacity = (1 - abs * .2).toFixed(2);
         peca.style.zIndex = String(200 - Math.round(abs * 150));
       });
     }
 
     function passo() {
-      if (!arrastando && !pausado) x -= velAtual;
+      if (!arrastando && !pausado && !emTransicaoSeta) x -= velAtual;
       if (largura > 0) {
         if (x <= -largura) x += largura;
         if (x > 0) x -= largura;
@@ -465,14 +465,22 @@
     carrossel.addEventListener('pointerenter', function () { pausado = true; });
     carrossel.addEventListener('pointerleave', function () { pausado = false; if (arrastando) soltar(); });
 
+    var pecaAlvo = null;
+
+    // obs: trilha.setPointerCapture faz o navegador redirecionar o evento
+    // "click" nativo pra disparar na própria trilha, não na peça sob o dedo/
+    // mouse — por isso a abertura do lightbox é feita aqui manualmente
+    // (via pecaAlvo.click()) em vez de depender do bubbling do clique.
     trilha.addEventListener('pointerdown', function (e) {
       if (e.pointerType === 'mouse' && e.button !== 0) return;
       arrastando = true;
       moveu = false;
       inicioPonteiro = e.clientX;
       inicioX = x;
+      pecaAlvo = e.target.closest ? e.target.closest('.peca') : null;
       trilha.classList.add('arrastando');
       trilha.setPointerCapture(e.pointerId);
+      e.preventDefault();
     });
     trilha.addEventListener('pointermove', function (e) {
       if (!arrastando) return;
@@ -483,15 +491,13 @@
     function soltar() {
       arrastando = false;
       trilha.classList.remove('arrastando');
+      if (!moveu && pecaAlvo) pecaAlvo.click();
+      pecaAlvo = null;
     }
     trilha.addEventListener('pointerup', soltar);
-    trilha.addEventListener('pointercancel', soltar);
+    trilha.addEventListener('pointercancel', function () { pecaAlvo = null; arrastando = false; trilha.classList.remove('arrastando'); });
     trilha.addEventListener('pointerleave', function () { if (arrastando) soltar(); });
-
-    // pega o clique antes dele chegar na peça — se veio de um arraste, cancela
-    trilha.addEventListener('click', function (e) {
-      if (moveu) { e.stopPropagation(); e.preventDefault(); }
-    }, true);
+    trilha.addEventListener('dragstart', function (e) { e.preventDefault(); });
 
     function largoDoCartao() {
       var peca = trilha.querySelector('.peca');
@@ -499,8 +505,25 @@
       var gap = parseFloat(getComputedStyle(trilha).columnGap || getComputedStyle(trilha).gap || 22);
       return peca.getBoundingClientRect().width + gap;
     }
-    if (btnAnterior) btnAnterior.addEventListener('click', function () { x += largoDoCartao(); });
-    if (btnProximo) btnProximo.addEventListener('click', function () { x -= largoDoCartao(); });
+
+    // navegação pelas setas com uma transição animada visível, em vez de
+    // um salto seco — usa gsap se disponível, senão anima só a velocidade
+    var alvoX = { v: 0 };
+    var emTransicaoSeta = false;
+    function irPara(deltaX) {
+      if (!temGsap || reduzido) { x += deltaX; return; }
+      emTransicaoSeta = true;
+      alvoX.v = x;
+      gsap.to(alvoX, {
+        v: x + deltaX,
+        duration: .7,
+        ease: 'power3.out',
+        onUpdate: function () { x = alvoX.v; },
+        onComplete: function () { emTransicaoSeta = false; }
+      });
+    }
+    if (btnAnterior) btnAnterior.addEventListener('click', function () { irPara(largoDoCartao()); });
+    if (btnProximo) btnProximo.addEventListener('click', function () { irPara(-largoDoCartao()); });
   }
 
   /* ---------------------------------------------------------

@@ -650,27 +650,30 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
 .carrossel {
   position: relative;
   margin: 0 calc(var(--espaco-x) * -1);
-  padding: 56px var(--espaco-x) 78px;
+  padding: 36px var(--espaco-x) 50px;
   background: var(--fundo-escuro);
   overflow: hidden;
 }
 .carrossel-trilha {
   display: flex;
   align-items: center;
-  gap: 22px;
+  gap: 26px;
   cursor: grab;
   will-change: transform;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
 }
 .carrossel-trilha.arrastando { cursor: grabbing; }
 .peca {
   position: relative;
   cursor: pointer;
   flex: 0 0 auto;
-  width: min(58vw, 230px);
+  width: min(72vw, 320px);
   will-change: transform, filter, opacity;
 }
 @media (min-width: 700px) {
-  .peca { width: min(24vw, 240px); }
+  .peca { width: min(30vw, 340px); }
 }
 .peca-moldura {
   position: relative;
@@ -688,20 +691,9 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
   height: 100%;
   object-fit: cover;
   -webkit-user-drag: none;
-}
-.peca-legenda {
-  position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  user-select: none;
   pointer-events: none;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, .85);
 }
-.peca-categoria { font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: rgba(243, 238, 231, .65); }
-.peca-titulo { font-size: 13px; color: var(--texto); font-weight: 600; }
 .carrossel-seta {
   position: absolute;
   top: 45%;
@@ -744,10 +736,10 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
   transition: opacity .4s ease, visibility 0s linear .4s;
 }
 .lightbox.aberto { opacity: 1; visibility: visible; transition: opacity .4s ease; }
-.lightbox-img-wrap { position: relative; max-width: min(88vw, 620px); max-height: 82vh; perspective: 1200px; }
+.lightbox-img-wrap { position: relative; max-width: 95vw; max-height: 92vh; perspective: 1200px; }
 .lightbox-img-wrap img {
-  max-width: 100%;
-  max-height: 82vh;
+  max-width: 95vw;
+  max-height: 92vh;
   width: auto;
   box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
   transform: scale(.94);
