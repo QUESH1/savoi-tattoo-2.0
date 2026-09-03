@@ -657,7 +657,7 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
 .carrossel-trilha {
   display: flex;
   align-items: center;
-  gap: 26px;
+  gap: 14px;
   cursor: grab;
   will-change: transform;
   user-select: none;
