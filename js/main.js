@@ -475,8 +475,9 @@
         pecas3d.forEach(function (peca, i) {
           var d = deltas[i];
           var abs = d < 0 ? -d : d;
-          peca.style.transform = 'perspective(1300px) rotateY(' + (d * -24).toFixed(2) + 'deg) scale(' + (1 - abs * .12).toFixed(3) + ')';
-          peca.style.opacity = (1 - abs * .32).toFixed(2);
+          peca.style.transform = 'perspective(1300px) rotateY(' + (d * -27).toFixed(2) + 'deg) scale(' + (1 - abs * .16).toFixed(3) + ')';
+          peca.style.filter = 'brightness(' + (1 - abs * .62).toFixed(3) + ') saturate(' + (1 - abs * .35).toFixed(3) + ')';
+          peca.style.opacity = (1 - abs * .12).toFixed(2);
         });
       }
       function agendarInclinacao() {
