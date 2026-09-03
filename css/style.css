@@ -363,13 +363,17 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
 .rotulo {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  letter-spacing: .16em;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: .17em;
   text-transform: uppercase;
   color: var(--destaque);
 }
-.rotulo::before { content: ""; width: 20px; height: 1px; background: var(--destaque); }
+.rotulo::before { content: ""; width: 26px; height: 2px; background: var(--destaque); }
+@media (min-width: 700px) {
+  .rotulo { font-size: 18px; }
+}
 
 .mancha-marca {
   position: absolute;
@@ -404,6 +408,7 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
   inset: -6%;
   width: 112%;
   height: 112%;
+  max-width: none;
   object-fit: cover;
   object-position: center 28%;
   opacity: .85;
@@ -649,7 +654,13 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
 /* ============================================================
    portfólio — carrossel horizontal
    ============================================================ */
-.carrossel { position: relative; margin: 0 calc(var(--espaco-x) * -1); padding: 0 var(--espaco-x); }
+.carrossel {
+  position: relative;
+  margin: 0 calc(var(--espaco-x) * -1);
+  padding: 36px var(--espaco-x);
+  background: var(--fundo-escuro);
+  box-shadow: inset 0 0 90px 10px rgba(0, 0, 0, .6);
+}
 .carrossel-trilha {
   display: flex;
   gap: 22px;
@@ -715,7 +726,9 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
 .carrossel-anterior { left: 0; }
 .carrossel-proximo { right: 0; }
 @media (max-width: 700px) {
-  .carrossel-seta { display: none; }
+  .carrossel-seta { width: 36px; height: 36px; font-size: 17px; }
+  .carrossel-anterior { left: 4px; }
+  .carrossel-proximo { right: 4px; }
 }
 
 /* ============================================================
@@ -767,6 +780,13 @@ button { font-family: inherit; background: none; border: 0; color: inherit; }
   .lightbox-anterior { left: 8px; }
   .lightbox-proximo { right: 8px; }
   .lightbox-fechar { top: 16px; right: 16px; }
+  .lightbox-fechar,
+  .lightbox-nav {
+    background: rgba(20, 17, 14, .75);
+    border-radius: 999px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
 }
 
 /* ============================================================
